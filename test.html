@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Firebase File Upload</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+    <style>
+        #result {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 0;
+        }
+
+        .thumbnail {
+            height: 92px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        Upload Files<br />
+        <input type="text" id="input-name" class="form-control" placeholder="Banner name">
+        <button class="btn btn-sm btn-primary" onclick="validate()">Add
+            Banner</button>
+
+
+
+
+        <progress value="0" max="100" id="progress"></progress>
+
+
+        <form id="fileCatcher">
+
+            <input id="fileInput" type="file" accept="image/*" multiple>
+        </form>
+
+
+
+
+    </div>
+    </div>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-firestore.js"></script>
+
+   
+
+
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+        apiKey: "AIzaSyBtOX1p4cQqnhO40jE_Rptnja0xRisRZ8c",
+        authDomain: "ecommerce-9502d.firebaseapp.com",
+        projectId: "ecommerce-9502d",
+        storageBucket: "ecommerce-9502d.appspot.com",
+        messagingSenderId: "443307242634",
+        appId: "1:443307242634:web:6e374c7c64a9e2329d6973",
+        measurementId: "G-ETYPXCM2E5"
+    };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+  
+        var db = firebase.firestore();
+        var uploader = document.getElementById('progress');
+
+        var fileInput = document.getElementById('fileInput');
+
+        var file;
+        var files;
+        var t;
+
+
+        let x = Math.floor((Math.random() * 1869966665999) + 1);
+
+        let fileList = [];
+        var data;
+        let fileList2 = [];
+
+        var imageFile;
+
+
+        fileInput.addEventListener('change', function (e) {
+
+            fileList = [];
+            const files = fileInput.files;
+            //Get files
+            for (var i = 0; i < files.length; i++) {
+                //  imageFile = e.target.files[i];
+
+                // uploadImageAsPromise(imageFile);
+                fileList.push(files[i]);
+            }
+        });
+
+
+
+       
+
+        //Handle waiting to upload each file using promise
+
+
+        var validate = function () {
+
+            var n = new Date();
+            var y = n.getFullYear();
+            var m = n.getMonth() + 1;
+            var d = n.getSeconds();
+            var mi = n.getMinutes();
+
+            var y = x.toString;
+
+            var today = new Date();
+            var date = today.getSeconds() + "1" + today.getTime() + "2" + today.getMilliseconds();
+
+            //  e.preventDefault(); //Block the form from reloading the page
+            console.log(fileList);
+            const files = fileInput.files.list;
+            for (var i = 0; i < fileList.length; i++) {
+                 imageFile = fileList[i];
+
+                var storageRef = firebase.storage().ref('test/' + imageFile.name);
+
+                //Upload file
+                var task = storageRef.put(imageFile);
+
+
+                console.log(imageFile);
+                //uploadImageAsPromise(imageFile);
+
+                task.on('state_changed',
+                    function progress(snapshot) {
+                        var percentage = snapshot.bytesTransferred / snapshot.totalBytes * 100;
+                        uploader.value = percentage;
+                    },
+                    function error(err) {
+
+                    },
+                    function complete() {
+                        var downloadURL = task.snapshot.downloadURL;
+                        var all = [];
+                        for (i = 0; i < 3; i++) {
+                            let element = task.snapshot.downloadURL;
+                            all.push(element);
+                        }
+
+                        //  var downloadURL = task.snapshot.downloadURL;
+
+                        var itemName = document.getElementById('input-name').value;
+
+                        db.collection("Test").doc('date').set({
+                            Category: all,
+                            PunText: itemName
+
+                        })
+                            .then(function () {
+                                console.log("Doc successful");
+                                console.log("mmmmmmmmmm:   " + x);
+                            })
+                            .catch(function (error) {
+                                console.error("Error writing doc", error);
+                            });
+                    }
+                );
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+    </script>
+</body>
+
+</html>
